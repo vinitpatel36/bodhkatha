@@ -528,10 +528,23 @@ export async function signUpUser(
     }
 
     const authUser = mapSupabaseUser(data.user) || localBackupUser;
-    const needsEmailConfirmation = Boolean(data.user && !data.session);
 
     try {
       localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(authUser));
+      // Directly insert sync entry into Supabase DB table 'bodhkathao_sync'
+      const syncKey = `BODH-${cleanEmail.replace(/[^a-z0-9]/gi, '').substring(0, 4).toUpperCase()}`;
+      syncPreferencesToSupabase({
+        syncKey,
+        lastUpdated: Date.now(),
+        readStoryIds: [],
+        favoriteStoryIds: [],
+        bookmarks: [],
+        notes: {},
+        customTags: {},
+        lastReadStoryId: 1,
+        readingStreak: { current: 1, best: 1, lastDate: new Date().toISOString().split('T')[0] },
+        settings: {},
+      }).catch(() => {});
     } catch (e) {}
 
     return {

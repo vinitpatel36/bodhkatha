@@ -91,11 +91,21 @@ export function loadUserPreferences(): UserPreferences {
   }
 }
 
+let autoSyncTimer: any = null;
+
 export function saveUserPreferences(prefs: UserPreferences): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
   } catch (err) {
     console.error('Failed to save preferences to localStorage:', err);
+  }
+
+  // If internet is connected, directly push updates to Supabase DB
+  if (typeof navigator !== 'undefined' && navigator.onLine) {
+    if (autoSyncTimer) clearTimeout(autoSyncTimer);
+    autoSyncTimer = setTimeout(() => {
+      syncWithCloud(prefs).catch(() => {});
+    }, 800);
   }
 }
 
