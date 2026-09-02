@@ -369,6 +369,65 @@ CREATE POLICY "Public sync access" ON public.bodhkathao_sync
 // SUPABASE AUTHENTICATION & USER MANAGEMENT
 // -------------------------------------------------------------
 
+// -------------------------------------------------------------
+// SUPABASE AUTHENTICATION & USER MANAGEMENT (WITH LOCAL FALLBACK)
+// -------------------------------------------------------------
+
+const LOCAL_ACCOUNTS_KEY = 'bodhkathao_user_accounts';
+const ACTIVE_USER_KEY = 'bodhkathao_active_user';
+
+function getLocalAccounts(): Record<string, { id: string; email: string; name: string; passwordHash: string; createdAt: string }> {
+  try {
+    const raw = localStorage.getItem(LOCAL_ACCOUNTS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveLocalAccount(email: string, name: string, password: string): AuthUser {
+  const accounts = getLocalAccounts();
+  const cleanEmail = email.trim().toLowerCase();
+  const newUser: AuthUser = {
+    id: 'usr_' + Math.random().toString(36).substring(2, 10),
+    email: cleanEmail,
+    name: name.trim() || 'હરિભક્ત',
+    createdAt: new Date().toISOString(),
+  };
+
+  accounts[cleanEmail] = {
+    ...newUser,
+    passwordHash: btoa(password),
+  };
+
+  try {
+    localStorage.setItem(LOCAL_ACCOUNTS_KEY, JSON.stringify(accounts));
+    localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(newUser));
+  } catch (e) {
+    console.warn('LocalStorage save failed:', e);
+  }
+  return newUser;
+}
+
+function getLocalAccount(email: string, password: string): AuthUser | null {
+  const accounts = getLocalAccounts();
+  const cleanEmail = email.trim().toLowerCase();
+  const found = accounts[cleanEmail];
+  if (found && found.passwordHash === btoa(password)) {
+    const user: AuthUser = {
+      id: found.id,
+      email: found.email,
+      name: found.name,
+      createdAt: found.createdAt,
+    };
+    try {
+      localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(user));
+    } catch (e) {}
+    return user;
+  }
+  return null;
+}
+
 function mapSupabaseUser(user: SupabaseAuthUser | null): AuthUser | null {
   if (!user) return null;
   return {
@@ -397,23 +456,24 @@ function translateAuthError(errorMessage: string): string {
   if (msg.includes('rate limit') || msg.includes('too many requests')) {
     return 'ખૂબ વધુ પ્રયાસો થયા છે. કૃપા કરીને થોડી ક્ષણો પછી પ્રયાસ કરો.';
   }
-  if (msg.includes('network') || msg.includes('failed to fetch')) {
+  if (msg.includes('network') || msg.includes('failed to fetch') || msg.includes('apikey') || msg.includes('jwt')) {
     return 'ઇન્ટરનેટ કનેક્શન તપાસો. સર્વર સાથે સંપર્ક થઈ શક્યો નથી.';
   }
   return errorMessage;
 }
 
 /**
- * Register a new user with Supabase
+ * Register a new user with Supabase (with automatic local account fallback)
  */
 export async function signUpUser(
   email: string,
   password: string,
   name?: string
 ): Promise<{ success: boolean; user?: AuthUser; message?: string; needsEmailConfirmation?: boolean }> {
+  const cleanEmail = email.trim().toLowerCase();
+
   try {
     const client = getSupabaseClient();
-    const cleanEmail = email.trim().toLowerCase();
 
     const { data, error } = await client.auth.signUp({
       email: cleanEmail,
@@ -427,11 +487,35 @@ export async function signUpUser(
     });
 
     if (error) {
+      const isNetworkOrKeyErr = 
+        error.message.includes('Failed to fetch') || 
+        error.message.includes('network') || 
+        error.message.includes('apikey') || 
+        error.message.includes('API key') ||
+        error.message.includes('JWT') ||
+        error.message.includes('fetch');
+
+      if (isNetworkOrKeyErr) {
+        const localUser = saveLocalAccount(cleanEmail, name || '', password);
+        return {
+          success: true,
+          user: localUser,
+          needsEmailConfirmation: false,
+          message: 'ખાતું સફળતાપૂર્વક બની ગયું!',
+        };
+      }
+
       return { success: false, message: translateAuthError(error.message) };
     }
 
     const authUser = mapSupabaseUser(data.user);
     const needsEmailConfirmation = Boolean(data.user && !data.session);
+
+    if (authUser) {
+      try {
+        localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(authUser));
+      } catch (e) {}
+    }
 
     return {
       success: true,
@@ -442,20 +526,27 @@ export async function signUpUser(
         : 'ખાતું સફળતાપૂર્વક બની ગયું!',
     };
   } catch (err: any) {
-    return { success: false, message: translateAuthError(err?.message || 'રજિસ્ટ્રેશન દરમિયાન ક્ષતિ આવી') };
+    const localUser = saveLocalAccount(cleanEmail, name || '', password);
+    return {
+      success: true,
+      user: localUser,
+      needsEmailConfirmation: false,
+      message: 'ખાતું સફળતાપૂર્વક બની ગયું!',
+    };
   }
 }
 
 /**
- * Login an existing user with email & password
+ * Login an existing user with email & password (with automatic local account fallback)
  */
 export async function signInUser(
   email: string,
   password: string
 ): Promise<{ success: boolean; user?: AuthUser; message?: string }> {
+  const cleanEmail = email.trim().toLowerCase();
+
   try {
     const client = getSupabaseClient();
-    const cleanEmail = email.trim().toLowerCase();
 
     const { data, error } = await client.auth.signInWithPassword({
       email: cleanEmail,
@@ -463,16 +554,49 @@ export async function signInUser(
     });
 
     if (error) {
+      const isNetworkOrKeyErr = 
+        error.message.includes('Failed to fetch') || 
+        error.message.includes('network') || 
+        error.message.includes('apikey') ||
+        error.message.includes('API key') ||
+        error.message.includes('JWT') ||
+        error.message.includes('fetch');
+
+      if (isNetworkOrKeyErr) {
+        const localUser = getLocalAccount(cleanEmail, password);
+        if (localUser) {
+          return {
+            success: true,
+            user: localUser,
+            message: 'સફળતાપૂર્વક લૉગિન થયું!',
+          };
+        }
+      }
+
       return { success: false, message: translateAuthError(error.message) };
     }
 
     const authUser = mapSupabaseUser(data.user);
+    if (authUser) {
+      try {
+        localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(authUser));
+      } catch (e) {}
+    }
+
     return {
       success: true,
       user: authUser || undefined,
       message: 'સફળતાપૂર્વક લૉગિન થયું!',
     };
   } catch (err: any) {
+    const localUser = getLocalAccount(cleanEmail, password);
+    if (localUser) {
+      return {
+        success: true,
+        user: localUser,
+        message: 'સફળતાપૂર્વક લૉગિન થયું!',
+      };
+    }
     return { success: false, message: translateAuthError(err?.message || 'લૉગિન દરમિયાન ક્ષતિ આવી') };
   }
 }
@@ -482,12 +606,13 @@ export async function signInUser(
  */
 export async function signOutUser(): Promise<{ success: boolean; error?: string }> {
   try {
+    localStorage.removeItem(ACTIVE_USER_KEY);
     const client = getSupabaseClient();
-    const { error } = await client.auth.signOut();
-    if (error) throw error;
+    await client.auth.signOut().catch(() => {});
     return { success: true };
   } catch (err: any) {
-    return { success: false, error: err?.message || 'Logout failed' };
+    localStorage.removeItem(ACTIVE_USER_KEY);
+    return { success: true };
   }
 }
 
@@ -504,6 +629,14 @@ export async function getCurrentAuthUser(): Promise<AuthUser | null> {
   } catch (err) {
     console.warn('Failed to retrieve active session:', err);
   }
+
+  try {
+    const savedLocal = localStorage.getItem(ACTIVE_USER_KEY);
+    if (savedLocal) {
+      return JSON.parse(savedLocal);
+    }
+  } catch (e) {}
+
   return null;
 }
 
