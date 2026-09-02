@@ -175,7 +175,6 @@ export const StoryList: React.FC<StoryListProps> = ({
 
 
   return (
-  return (
     <div id="story-list-container" className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
       {/* Top Welcome Banner & Reading Resume Bar */}
       <div className="bg-gradient-to-r from-amber-800 via-amber-700 to-amber-900 text-amber-50 rounded-3xl p-4 sm:p-8 shadow-sm relative overflow-hidden">
