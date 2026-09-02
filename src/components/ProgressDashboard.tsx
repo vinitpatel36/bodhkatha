@@ -46,7 +46,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({
   const noteStories = stories.filter((s) => Boolean(preferences.notes[s.id]));
 
   return (
-    <div id="progress-dashboard-view" className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8 animate-in fade-in duration-300">
+    <div id="progress-dashboard-view" className="max-w-6xl mx-auto px-3 sm:px-6 py-4 sm:py-8 space-y-4 sm:space-y-8 animate-in fade-in duration-300">
       {/* Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

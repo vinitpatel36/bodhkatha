@@ -379,7 +379,7 @@ export const TagsExplorer: React.FC<TagsExplorerProps> = ({
   };
 
   return (
-    <div id="tags-explorer-container" className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+    <div id="tags-explorer-container" className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
       {/* Toast Notification */}
       {successToast && (
         <div className="fixed top-20 right-5 z-50 bg-amber-900 text-white dark:bg-amber-100 dark:text-amber-950 px-4 py-2.5 rounded-2xl shadow-xl border border-amber-700/40 text-xs font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
@@ -389,7 +389,7 @@ export const TagsExplorer: React.FC<TagsExplorerProps> = ({
       )}
 
       {/* Main Header & Tab Navigation */}
-      <div className="bg-white dark:bg-stone-900 rounded-3xl p-5 sm:p-7 border border-stone-200 dark:border-stone-800 shadow-xs space-y-5">
+      <div className="bg-white dark:bg-stone-900 rounded-3xl p-4 sm:p-7 border border-stone-200 dark:border-stone-800 shadow-xs space-y-4 sm:space-y-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
@@ -418,21 +418,21 @@ export const TagsExplorer: React.FC<TagsExplorerProps> = ({
 
         {/* Navigation Tabs: My Tags vs All Other User / Community Tags */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-stone-100 dark:border-stone-800">
-          <div className="flex items-center gap-2 p-1 bg-stone-100 dark:bg-stone-800 rounded-2xl">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-1.5 p-1 bg-stone-100 dark:bg-stone-800 rounded-2xl">
             <button
               id="tab-my-tags-btn"
               onClick={() => {
                 setActiveTab('my-tags');
                 setSearchQuery('');
               }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+              className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
                 activeTab === 'my-tags'
                   ? 'bg-white dark:bg-stone-900 text-amber-900 dark:text-amber-200 shadow-xs'
                   : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
               }`}
             >
               <User className="w-4 h-4 text-amber-600" />
-              <span>મારા ટેગ્સ (My Tags)</span>
+              <span>મારા ટેગ્સ</span>
               <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
                 {myTagsList.length}
               </span>
@@ -444,14 +444,14 @@ export const TagsExplorer: React.FC<TagsExplorerProps> = ({
                 setActiveTab('community-tags');
                 setSearchQuery('');
               }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+              className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
                 activeTab === 'community-tags'
                   ? 'bg-white dark:bg-stone-900 text-amber-900 dark:text-amber-200 shadow-xs'
                   : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
               }`}
             >
               <Users className="w-4 h-4 text-amber-600" />
-              <span>સામૂહિક ટેગ્સ (All Other User Tags)</span>
+              <span>સામૂહિક ટેગ્સ</span>
               <span className="px-2 py-0.5 rounded-full text-[10px] bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300">
                 {communityTagsList.length}
               </span>

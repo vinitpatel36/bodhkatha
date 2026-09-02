@@ -175,20 +175,21 @@ export const StoryList: React.FC<StoryListProps> = ({
 
 
   return (
-    <div id="story-list-container" className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+  return (
+    <div id="story-list-container" className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
       {/* Top Welcome Banner & Reading Resume Bar */}
-      <div className="bg-gradient-to-r from-amber-800 via-amber-700 to-amber-900 text-amber-50 rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden">
+      <div className="bg-gradient-to-r from-amber-800 via-amber-700 to-amber-900 text-amber-50 rounded-3xl p-4 sm:p-8 shadow-sm relative overflow-hidden">
         {/* Subtle decorative circles */}
         <div className="absolute -right-12 -bottom-12 w-64 h-64 bg-amber-600/20 rounded-full blur-2xl pointer-events-none" />
         <div className="absolute left-1/3 -top-12 w-48 h-48 bg-amber-500/15 rounded-full blur-xl pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
           <div className="space-y-2 max-w-2xl">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-900/60 border border-amber-500/30 text-amber-200 text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span>યોગીજી મહારાજની બોધકથાઓ</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-['Noto_Sans_Gujarati']">
+            <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-white font-['Noto_Sans_Gujarati'] leading-snug">
               અમૃતવાણી બોધકથાઓનો દિવ્ય ખજાનો
             </h1>
             <p className="text-amber-200/85 text-xs sm:text-sm leading-relaxed">
@@ -197,10 +198,10 @@ export const StoryList: React.FC<StoryListProps> = ({
           </div>
 
           {/* Quick Continue Reading Button */}
-          <div className="shrink-0 bg-amber-950/50 backdrop-blur-sm p-4 rounded-2xl border border-amber-500/30 flex flex-col sm:flex-row md:flex-col items-start sm:items-center md:items-start gap-3">
+          <div className="shrink-0 bg-amber-950/50 backdrop-blur-sm p-3.5 sm:p-4 rounded-2xl border border-amber-500/30 flex flex-col sm:flex-row md:flex-col items-start sm:items-center md:items-start gap-3">
             <div>
               <div className="text-[11px] text-amber-300 font-semibold uppercase tracking-wider">છેલ્લે વાંચેલી વાર્તા</div>
-              <div className="font-bold text-sm text-white truncate max-w-[200px] font-['Noto_Sans_Gujarati']">
+              <div className="font-bold text-xs sm:text-sm text-white truncate max-w-full sm:max-w-[200px] font-['Noto_Sans_Gujarati']">
                 {stories.find((s) => s.id === preferences.lastReadStoryId)?.title || stories[0]?.title}
               </div>
             </div>
@@ -217,11 +218,11 @@ export const StoryList: React.FC<StoryListProps> = ({
       </div>
 
       {/* Filter and Control Bar */}
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {/* Status Filters & Jump to Story */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           {/* Status Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full no-scrollbar">
             <button
               id="filter-all-btn"
               onClick={() => setFilterReadStatus('all')}
@@ -274,8 +275,8 @@ export const StoryList: React.FC<StoryListProps> = ({
           </div>
 
           {/* Quick Jump & View Toggle */}
-          <div className="flex items-center gap-2">
-            <form onSubmit={handleJumpToStory} className="flex items-center">
+          <div className="flex items-center justify-between sm:justify-start w-full sm:w-auto gap-2">
+            <form onSubmit={handleJumpToStory} className="flex items-center flex-1 sm:flex-initial">
               <input
                 id="jump-to-story-input"
                 type="number"
@@ -284,17 +285,17 @@ export const StoryList: React.FC<StoryListProps> = ({
                 value={jumpNumberInput}
                 onChange={(e) => setJumpNumberInput(e.target.value)}
                 placeholder="વાર્તા નં. (1-469)"
-                className="w-28 px-2.5 py-1.5 text-xs rounded-l-xl border border-r-0 border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                className="w-full sm:w-28 px-2.5 py-1.5 text-xs rounded-l-xl border border-r-0 border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-1 focus:ring-amber-500"
               />
               <button
                 type="submit"
-                className="px-2.5 py-1.5 bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold rounded-r-xl"
+                className="px-3 py-1.5 bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold rounded-r-xl shrink-0"
               >
                 જાઓ
               </button>
             </form>
 
-            <div className="flex items-center bg-stone-200/70 dark:bg-stone-800 p-1 rounded-xl">
+            <div className="flex items-center bg-stone-200/70 dark:bg-stone-800 p-1 rounded-xl shrink-0">
               <button
                 onClick={() => setViewLayout('grid')}
                 className={`p-1 rounded-lg transition-all ${
@@ -322,7 +323,7 @@ export const StoryList: React.FC<StoryListProps> = ({
         </div>
 
         {/* Category Filter Chips */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
           {CATEGORIES.map((cat) => {
             const count = categoryCounts[cat.id] || 0;
             const isSelected = selectedCategory === cat.id;
@@ -346,7 +347,7 @@ export const StoryList: React.FC<StoryListProps> = ({
         </div>
 
         {/* Quick Tag Filter Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 text-xs">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 text-xs no-scrollbar">
           <span className="text-stone-400 font-semibold flex items-center gap-1 shrink-0 text-[11px]">
             <TagIcon className="w-3 h-3 text-amber-600" /> ટેગ્સ:
           </span>

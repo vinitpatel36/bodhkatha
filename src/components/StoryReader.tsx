@@ -336,7 +336,7 @@ export const StoryReader: React.FC<StoryReaderProps> = ({
           </div>
 
           {/* Quick Reader Action Buttons */}
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar max-w-full">
             {/* Original Book Page Preview */}
             <button
               id="view-original-page-btn"
@@ -539,11 +539,11 @@ export const StoryReader: React.FC<StoryReaderProps> = ({
       </div>
 
       {/* Main Reading Canvas */}
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10">
+      <main className="max-w-3xl mx-auto px-3 sm:px-6 pt-4 sm:pt-10">
         {/* Story Card */}
         <article 
           id={`story-article-${story.id}`}
-          className={`p-6 sm:p-10 rounded-3xl border transition-all duration-300 ${cardClass}`}
+          className={`p-4 sm:p-10 rounded-3xl border transition-all duration-300 ${cardClass}`}
         >
           {/* Header Metadata */}
           <div className="flex flex-wrap items-center justify-between gap-3 pb-6 border-b border-stone-200/70 dark:border-stone-800/70">

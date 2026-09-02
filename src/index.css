@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+@layer base {
+  html, body, #root, #app-root {
+    max-width: 100vw;
+    overflow-x: hidden;
+    touch-action: manipulation;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

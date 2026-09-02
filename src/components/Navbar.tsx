@@ -133,8 +133,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Search className="w-5 h-5" />
           </button>
 
-          {/* View Mode Tabs */}
-          <div className="flex items-center bg-stone-200/60 dark:bg-stone-800 p-0.5 rounded-lg text-xs font-medium">
+          {/* View Mode Tabs (Hidden on mobile, present in bottom navigation bar) */}
+          <div className="hidden md:flex items-center bg-stone-200/60 dark:bg-stone-800 p-0.5 rounded-lg text-xs font-medium">
             <button
               id="view-list-btn"
               onClick={() => setActiveView('list')}
