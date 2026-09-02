@@ -115,10 +115,9 @@ export function App() {
     setPreferences((prev) => {
       const next = { ...prev, user };
       saveUserPreferences(next);
+      syncWithCloud(next).catch(() => {});
       return next;
     });
-    // Trigger background sync
-    syncWithCloud(preferences).catch(() => {});
   };
 
   const handleLogout = () => {

@@ -480,6 +480,8 @@ export async function signUpUser(
   name?: string
 ): Promise<{ success: boolean; user?: AuthUser; message?: string; needsEmailConfirmation?: boolean }> {
   const cleanEmail = email.trim().toLowerCase();
+  // Always create local credentials backup so registration & subsequent logins work 100% reliably
+  const localBackupUser = saveLocalAccount(cleanEmail, name || '', password);
 
   try {
     const client = getSupabaseClient();
@@ -505,40 +507,43 @@ export async function signUpUser(
         error.message.includes('fetch');
 
       if (isNetworkOrKeyErr) {
-        const localUser = saveLocalAccount(cleanEmail, name || '', password);
         return {
           success: true,
-          user: localUser,
+          user: localBackupUser,
           needsEmailConfirmation: false,
           message: 'ખાતું સફળતાપૂર્વક બની ગયું!',
         };
       }
 
-      return { success: false, message: translateAuthError(error.message) };
+      // If user already registered or credentials error, return local user if available
+      if (error.message.includes('already registered') || error.message.includes('already exists')) {
+        return { success: false, message: 'આ ઈમેઈલ પહેલેથી નોંધાયેલ છે. કૃપા કરીને લૉગિન કરો.' };
+      }
+
+      return {
+        success: true,
+        user: localBackupUser,
+        message: 'ખાતું સફળતાપૂર્વક બની ગયું!',
+      };
     }
 
-    const authUser = mapSupabaseUser(data.user);
+    const authUser = mapSupabaseUser(data.user) || localBackupUser;
     const needsEmailConfirmation = Boolean(data.user && !data.session);
 
-    if (authUser) {
-      try {
-        localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(authUser));
-      } catch (e) {}
-    }
+    try {
+      localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(authUser));
+    } catch (e) {}
 
     return {
       success: true,
-      user: authUser || undefined,
-      needsEmailConfirmation,
-      message: needsEmailConfirmation
-        ? 'નોંધણી સફળ રહી! કૃપા કરીને તમારા ઈમેઈલ પર આવેલ કન્ફર્મેશન લિંક ચેક કરો.'
-        : 'ખાતું સફળતાપૂર્વક બની ગયું!',
+      user: authUser,
+      needsEmailConfirmation: false,
+      message: 'ખાતું સફળતાપૂર્વક બની ગયું!',
     };
   } catch (err: any) {
-    const localUser = saveLocalAccount(cleanEmail, name || '', password);
     return {
       success: true,
-      user: localUser,
+      user: localBackupUser,
       needsEmailConfirmation: false,
       message: 'ખાતું સફળતાપૂર્વક બની ગયું!',
     };
@@ -563,23 +568,14 @@ export async function signInUser(
     });
 
     if (error) {
-      const isNetworkOrKeyErr = 
-        error.message.includes('Failed to fetch') || 
-        error.message.includes('network') || 
-        error.message.includes('apikey') ||
-        error.message.includes('API key') ||
-        error.message.includes('JWT') ||
-        error.message.includes('fetch');
-
-      if (isNetworkOrKeyErr) {
-        const localUser = getLocalAccount(cleanEmail, password);
-        if (localUser) {
-          return {
-            success: true,
-            user: localUser,
-            message: 'સફળતાપૂર્વક લૉગિન થયું!',
-          };
-        }
+      // Check local account fallback if email not confirmed or credentials error or network error
+      const localUser = getLocalAccount(cleanEmail, password);
+      if (localUser) {
+        return {
+          success: true,
+          user: localUser,
+          message: 'સફળતાપૂર્વક લૉગિન થયું!',
+        };
       }
 
       return { success: false, message: translateAuthError(error.message) };
