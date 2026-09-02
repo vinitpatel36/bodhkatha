@@ -340,45 +340,7 @@ export const StoryList: React.FC<StoryListProps> = ({
         </div>
       </div>
 
-        {/* Quick Tag Filter Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 text-xs no-scrollbar">
-          <span className="text-stone-400 font-semibold flex items-center gap-1 shrink-0 text-[11px]">
-            <TagIcon className="w-3 h-3 text-amber-600" /> ટેગ્સ:
-          </span>
 
-          {selectedTagFilter && (
-            <button
-              onClick={() => setSelectedTagFilter(null)}
-              className="px-2.5 py-1 rounded-lg bg-amber-600 text-white font-semibold flex items-center gap-1 shrink-0 shadow-xs"
-            >
-              <span>#{selectedTagFilter}</span>
-              <X className="w-3 h-3" />
-            </button>
-          )}
-
-          {popularTags.slice(0, 7).map((tag) => {
-            if (tag === selectedTagFilter) return null;
-            return (
-              <button
-                key={tag}
-                onClick={() => setSelectedTagFilter(tag)}
-                className="px-2.5 py-1 rounded-lg bg-stone-100 dark:bg-stone-800 hover:bg-amber-100 dark:hover:bg-amber-950/50 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700/80 font-medium shrink-0 transition-colors"
-              >
-                #{tag}
-              </button>
-            );
-          })}
-
-          {onOpenTagInExplorer && (
-            <button
-              onClick={() => onOpenTagInExplorer('')}
-              className="px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/40 border border-amber-200 dark:border-amber-800/50 font-semibold shrink-0 transition-colors flex items-center gap-1"
-            >
-              <span>બધા ટેગ્સ હબ</span>
-              <ArrowRight className="w-3 h-3" />
-            </button>
-          )}
-        </div>
 
       {/* Active Filter Indicators / Search Summary */}
       {(searchQuery || selectedCategory !== 'all' || selectedTagFilter || filterReadStatus !== 'all') && (
