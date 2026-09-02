@@ -60,15 +60,20 @@ export async function testSupabaseConnection(): Promise<SupabaseStatus> {
       return result;
     }
 
-    result.connected = true;
-
     // Check stories table
     const { data: stories, error: storiesErr } = await client
       .from('stories')
       .select('id', { count: 'exact' })
       .limit(1);
 
-    if (!storiesErr) {
+    if (storiesErr) {
+      const errMsg = storiesErr.message || '';
+      if (errMsg.includes('apiKey') || errMsg.includes('API key') || errMsg.includes('JWT') || errMsg.includes('invalid') || errMsg.includes('Unauthorized')) {
+        result.connected = false;
+        result.message = 'અમાન્ય Supabase Anon Key (VITE_SUPABASE_ANON_KEY).';
+        return result;
+      }
+    } else {
       result.hasStoriesTable = true;
       const { count } = await client.from('stories').select('*', { count: 'exact', head: true });
       result.storiesCount = count || 0;
@@ -84,9 +89,13 @@ export async function testSupabaseConnection(): Promise<SupabaseStatus> {
       result.hasSyncTable = true;
     }
 
-    result.message = 'Supabase connected successfully!';
+    result.connected = result.hasStoriesTable || result.hasSyncTable;
+    result.message = result.connected 
+      ? 'Supabase સફળતાપૂર્વક કનેક્ટ થયેલ છે!' 
+      : 'Supabase ટેબલ્સ મળ્યા નથી. SQL સ્કીમા રન કરો.';
     return result;
   } catch (err: any) {
+    result.connected = false;
     result.message = err?.message || 'Connection check failed';
     return result;
   }
