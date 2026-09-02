@@ -137,33 +137,37 @@ export async function fetchAllStories(): Promise<Story[]> {
 }
 
 /**
- * Save / Merge user reading state to Supabase
+ * Save / Merge user reading state to Supabase by user.id, email, or syncKey
  */
-export async function syncPreferencesToSupabase(payload: SyncPayload): Promise<{ success: boolean; error?: string }> {
+export async function syncPreferencesToSupabase(payload: SyncPayload, user?: AuthUser | null): Promise<{ success: boolean; error?: string }> {
   try {
     const client = getSupabaseClient();
-    const cleanKey = payload.syncKey.trim().toUpperCase();
+    
+    // Collect all candidate keys to ensure user.id, email, and sync_key are all indexed in DB!
+    const keysToSync = new Set<string>();
+    if (user?.id) keysToSync.add(user.id);
+    if (user?.email) keysToSync.add(user.email.trim().toLowerCase());
+    if (payload.syncKey) keysToSync.add(payload.syncKey.trim());
+    if (keysToSync.size === 0) keysToSync.add('DEFAULT');
 
-    const record = {
-      sync_key: cleanKey,
-      last_updated: payload.lastUpdated,
-      read_story_ids: payload.readStoryIds,
-      favorite_story_ids: payload.favoriteStoryIds,
-      bookmarks: payload.bookmarks,
-      notes: payload.notes,
-      custom_tags: payload.customTags || {},
-      last_read_story_id: payload.lastReadStoryId,
-      reading_streak: payload.readingStreak,
-      settings: payload.settings,
-      updated_at: new Date().toISOString(),
-    };
+    for (const key of keysToSync) {
+      const record = {
+        sync_key: key,
+        last_updated: payload.lastUpdated,
+        read_story_ids: payload.readStoryIds,
+        favorite_story_ids: payload.favoriteStoryIds,
+        bookmarks: payload.bookmarks,
+        notes: payload.notes,
+        custom_tags: payload.customTags || {},
+        last_read_story_id: payload.lastReadStoryId,
+        reading_streak: payload.readingStreak,
+        settings: payload.settings,
+        updated_at: new Date().toISOString(),
+      };
 
-    const { error } = await client
-      .from('bodhkathao_sync')
-      .upsert(record, { onConflict: 'sync_key' });
-
-    if (error) {
-      return { success: false, error: error.message };
+      await client
+        .from('bodhkathao_sync')
+        .upsert(record, { onConflict: 'sync_key' });
     }
 
     return { success: true };
@@ -173,41 +177,49 @@ export async function syncPreferencesToSupabase(payload: SyncPayload): Promise<{
 }
 
 /**
- * Load preferences from Supabase by sync key
+ * Load preferences from Supabase by user ID, user email, or sync key
  */
-export async function loadPreferencesFromSupabase(syncKey: string): Promise<{ success: boolean; data?: SyncPayload; error?: string }> {
+export async function loadPreferencesFromSupabase(syncKeyOrUser: string | AuthUser | null): Promise<{ success: boolean; data?: SyncPayload; error?: string }> {
+  if (!syncKeyOrUser) return { success: false, error: 'No user or key provided' };
+
   try {
     const client = getSupabaseClient();
-    const cleanKey = syncKey.trim().toUpperCase();
+    const candidateKeys: string[] = [];
 
-    const { data, error } = await client
-      .from('bodhkathao_sync')
-      .select('*')
-      .eq('sync_key', cleanKey)
-      .maybeSingle();
-
-    if (error) {
-      return { success: false, error: error.message };
+    if (typeof syncKeyOrUser === 'string') {
+      const trimmed = syncKeyOrUser.trim();
+      candidateKeys.push(trimmed);
+      candidateKeys.push(trimmed.toUpperCase());
+    } else if (typeof syncKeyOrUser === 'object') {
+      if (syncKeyOrUser.id) candidateKeys.push(syncKeyOrUser.id);
+      if (syncKeyOrUser.email) candidateKeys.push(syncKeyOrUser.email.trim().toLowerCase());
     }
 
-    if (!data) {
-      return { success: false, error: 'No synced data found for this key' };
+    for (const key of candidateKeys) {
+      const { data, error } = await client
+        .from('bodhkathao_sync')
+        .select('*')
+        .eq('sync_key', key)
+        .maybeSingle();
+
+      if (!error && data) {
+        const payload: SyncPayload = {
+          syncKey: data.sync_key,
+          lastUpdated: data.last_updated || Date.now(),
+          readStoryIds: data.read_story_ids || [],
+          favoriteStoryIds: data.favorite_story_ids || [],
+          bookmarks: data.bookmarks || [],
+          notes: data.notes || {},
+          customTags: data.custom_tags || {},
+          lastReadStoryId: data.last_read_story_id || 1,
+          readingStreak: data.reading_streak || { current: 1, best: 1, lastDate: new Date().toISOString().split('T')[0] },
+          settings: data.settings || {},
+        };
+        return { success: true, data: payload };
+      }
     }
 
-    const payload: SyncPayload = {
-      syncKey: data.sync_key,
-      lastUpdated: data.last_updated || Date.now(),
-      readStoryIds: data.read_story_ids || [],
-      favoriteStoryIds: data.favorite_story_ids || [],
-      bookmarks: data.bookmarks || [],
-      notes: data.notes || {},
-      customTags: data.custom_tags || {},
-      lastReadStoryId: data.last_read_story_id || 1,
-      readingStreak: data.reading_streak || { current: 1, best: 1, lastDate: new Date().toISOString().split('T')[0] },
-      settings: data.settings || {},
-    };
-
-    return { success: true, data: payload };
+    return { success: false, error: 'No synced data found in Supabase' };
   } catch (err: any) {
     return { success: false, error: err?.message || 'Supabase load failed' };
   }

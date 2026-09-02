@@ -158,7 +158,7 @@ export async function syncWithCloud(prefs: UserPreferences, syncKeyOverride?: st
       settings: prefs.settings,
     };
 
-    const supaRes = await syncPreferencesToSupabase(supabasePayload);
+    const supaRes = await syncPreferencesToSupabase(supabasePayload, prefs.user);
     if (supaRes.success) {
       const updatedPrefs: UserPreferences = {
         ...prefs,

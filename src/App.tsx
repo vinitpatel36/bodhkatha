@@ -41,6 +41,45 @@ export function App() {
   const [originalPageStory, setOriginalPageStory] = useState<Story | null>(null);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
+  const syncUserWithSupabaseDB = async (user: AuthUser) => {
+    try {
+      const res = await loadPreferencesFromSupabase(user);
+      if (res.success && res.data) {
+        setPreferences((prev) => {
+          const mergedFavs = Array.from(new Set([...prev.favorites, ...(res.data?.favoriteStoryIds || [])]));
+          const mergedReads = Array.from(new Set([...prev.readStories, ...(res.data?.readStoryIds || [])]));
+          const next: UserPreferences = {
+            ...prev,
+            user,
+            favorites: mergedFavs,
+            readStories: mergedReads,
+            bookmarks: res.data?.bookmarks?.length ? res.data.bookmarks : prev.bookmarks,
+            notes: { ...prev.notes, ...(res.data?.notes || {}) },
+            customTags: { ...prev.customTags, ...(res.data?.customTags || {}) },
+            lastSyncedAt: Date.now(),
+          };
+          saveUserPreferences(next);
+          syncWithCloud(next).catch(() => {});
+          return next;
+        });
+      } else {
+        setPreferences((prev) => {
+          const next = { ...prev, user };
+          saveUserPreferences(next);
+          syncWithCloud(next).catch(() => {});
+          return next;
+        });
+      }
+    } catch (e) {
+      setPreferences((prev) => {
+        const next = { ...prev, user };
+        saveUserPreferences(next);
+        syncWithCloud(next).catch(() => {});
+        return next;
+      });
+    }
+  };
+
   // Initialize and update reading streak & auth session on mount
   useEffect(() => {
     const updated = updateReadingStreak(preferences);
@@ -50,25 +89,21 @@ export function App() {
     getCurrentAuthUser().then((user) => {
       if (user) {
         setCurrentUser(user);
-        setPreferences((prev) => {
-          const next = { ...prev, user };
-          saveUserPreferences(next);
-          return next;
-        });
+        syncUserWithSupabaseDB(user);
       }
     });
 
     // Subscribe to auth state changes
     const unsubscribeAuth = onAuthSessionChange((user) => {
       setCurrentUser(user);
-      setPreferences((prev) => {
-        const next = { ...prev, user: user || null };
-        saveUserPreferences(next);
-        return next;
-      });
       if (user) {
-        // Auto sync with cloud on sign in
-        syncWithCloud(preferences).catch(() => {});
+        syncUserWithSupabaseDB(user);
+      } else {
+        setPreferences((prev) => {
+          const next = { ...prev, user: null };
+          saveUserPreferences(next);
+          return next;
+        });
       }
     });
 
@@ -112,12 +147,7 @@ export function App() {
 
   const handleAuthSuccess = (user: AuthUser) => {
     setCurrentUser(user);
-    setPreferences((prev) => {
-      const next = { ...prev, user };
-      saveUserPreferences(next);
-      syncWithCloud(next).catch(() => {});
-      return next;
-    });
+    syncUserWithSupabaseDB(user);
   };
 
   const handleLogout = () => {
