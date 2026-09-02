@@ -13,7 +13,7 @@ export const DEFAULT_SUPABASE_URL =
 export const DEFAULT_SUPABASE_ANON_KEY = 
   metaEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 
   metaEnv.VITE_SUPABASE_ANON_KEY || 
-  'sb_publishable_Kdw-_cKJOEUiPQXcVkbdyw_vJkl9Na9';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhrZG9hbnpyamliaGx1amRudGloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyMTU0MzEsImV4cCI6MjEwMjc5MTQzMX0._kOG_QHoUeAgQ-O6ApC2AHVR6alKpHohbhwk6vVE1cw';
 
 
 let supabaseClient: SupabaseClient | null = null;
