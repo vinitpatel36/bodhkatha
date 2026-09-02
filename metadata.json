@@ -1,0 +1,6 @@
+{
+  "name": "Bodhkathao - Parables Reader",
+  "description": "An offline-ready PWA book reader for Yogiji Maharaj's Bodhkathao (યોગીજી મહારાજની બોધકથાઓ) featuring individual story reading, favorites tagging, full-text search, reading progress tracking, custom themes, Gujarati typography controls, and cross-device synchronization.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

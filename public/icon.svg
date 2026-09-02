@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b45309" />
+      <stop offset="100%" stop-color="#78350f" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Rounded Base -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  
+  <!-- Inner Ornamental Border -->
+  <rect x="24" y="24" width="464" height="464" rx="90" fill="none" stroke="#fde68a" stroke-width="4" stroke-opacity="0.3" stroke-dasharray="12 6"/>
+  
+  <!-- Open Book Symbol -->
+  <g filter="url(#shadow)" transform="translate(80, 110)">
+    <!-- Book Pages Base -->
+    <path d="M176 80 C120 40 40 46 0 60 L0 270 C40 256 120 250 176 290 C232 250 312 256 352 270 L352 60 C312 46 232 40 176 80 Z" fill="#fffbeb" stroke="#d97706" stroke-width="4"/>
+    
+    <!-- Left Page Lines -->
+    <line x1="30" y1="95" x2="145" y2="95" stroke="#d97706" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    <line x1="30" y1="125" x2="145" y2="125" stroke="#d97706" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    <line x1="30" y1="155" x2="145" y2="155" stroke="#d97706" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    <line x1="30" y1="185" x2="115" y2="185" stroke="#d97706" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    
+    <!-- Right Page Lines -->
+    <line x1="207" y1="95" x2="322" y2="95" stroke="#d97706" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    <line x1="207" y1="125" x2="322" y2="125" stroke="#d97706" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    <line x1="207" y1="155" x2="322" y2="155" stroke="#d97706" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    <line x1="207" y1="185" x2="280" y2="185" stroke="#d97706" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    
+    <!-- Spine Center Shadow -->
+    <line x1="176" y1="80" x2="176" y2="290" stroke="#b45309" stroke-width="4"/>
+
+    <!-- Radiant Diya/Flame Above Book -->
+    <g transform="translate(176, 20)">
+      <!-- Ray aura -->
+      <circle cx="0" cy="0" r="45" fill="#fbbf24" opacity="0.2"/>
+      <!-- Flame outer -->
+      <path d="M0 -30 C18 -10 22 15 0 25 C-22 15 -18 -10 0 -30 Z" fill="url(#goldGrad)"/>
+      <!-- Flame inner core -->
+      <path d="M0 -15 C8 -2 10 10 0 16 C-10 10 -8 -2 0 -15 Z" fill="#ffffff"/>
+    </g>
+  </g>
+  
+  <!-- Gujarati Calligraphy Badge / Text at Bottom -->
+  <text x="256" y="445" font-family="'Noto Sans Gujarati', sans-serif" font-size="34" font-weight="bold" fill="#fef3c7" text-anchor="middle" letter-spacing="1">બોધકથાઓ</text>
+</svg>

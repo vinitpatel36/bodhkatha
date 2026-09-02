@@ -1,0 +1,19 @@
+{
+  "name": "યોગીજી મહારાજની બોધકથાઓ",
+  "short_name": "બોધકથાઓ",
+  "description": "યોગીજી મહારાજની દિવ્ય બોધકથાઓ - Offline Book Reader with Search, Favorites & Progress",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fffbeb",
+  "theme_color": "#b45309",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["books", "education", "lifestyle"]
+}
