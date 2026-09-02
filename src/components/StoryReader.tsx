@@ -575,11 +575,11 @@ export const StoryReader: React.FC<StoryReaderProps> = ({
           </div>
 
           {/* Story Narrative Content */}
-          <div className={`space-y-5 ${fontFamClass} ${fontSizeClass} ${lineSpacingClass} text-stone-800 dark:text-stone-100 tracking-wide`}>
+          <div className={`space-y-6 sm:space-y-7 ${fontFamClass} ${fontSizeClass} leading-relaxed sm:leading-loose text-stone-900 dark:text-stone-100 tracking-wide`}>
             {story.content.map((paragraph, idx) => (
               <p 
                 key={idx} 
-                className={idx === 0 ? "first-letter:text-3xl first-letter:font-bold first-letter:text-amber-700 dark:first-letter:text-amber-400 first-letter:mr-1" : ""}
+                className={idx === 0 ? "first-letter:text-4xl first-letter:font-bold first-letter:text-amber-700 dark:first-letter:text-amber-400 first-letter:mr-2" : ""}
               >
                 {paragraph}
               </p>

@@ -175,60 +175,54 @@ export const StoryList: React.FC<StoryListProps> = ({
 
 
   return (
-    <div id="story-list-container" className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
-      {/* Top Welcome Banner & Reading Resume Bar */}
-      <div className="bg-gradient-to-r from-amber-800 via-amber-700 to-amber-900 text-amber-50 rounded-3xl p-4 sm:p-8 shadow-sm relative overflow-hidden">
-        {/* Subtle decorative circles */}
-        <div className="absolute -right-12 -bottom-12 w-64 h-64 bg-amber-600/20 rounded-full blur-2xl pointer-events-none" />
-        <div className="absolute left-1/3 -top-12 w-48 h-48 bg-amber-500/15 rounded-full blur-xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-900/60 border border-amber-500/30 text-amber-200 text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>યોગીજી મહારાજની બોધકથાઓ</span>
-            </div>
-            <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-white font-['Noto_Sans_Gujarati'] leading-snug">
-              અમૃતવાણી બોધકથાઓનો દિવ્ય ખજાનો
-            </h1>
-            <p className="text-amber-200/85 text-xs sm:text-sm leading-relaxed">
-              જીવનમાં ભક્તિ, નમ્રતા, સત્સંગ અને સદાચારના સંસ્કારો સીંચતી પરમ પૂજ્ય યોગીજી મહારાજના મુખારવિંદેથી નીકળેલી પ્રાસાદિક વાર્તાઓ.
-            </p>
+    <div id="story-list-container" className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
+      {/* Sleek Welcome & Resume Reading Bar */}
+      <div className="bg-gradient-to-r from-amber-900 via-amber-800 to-amber-950 text-white rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-2 max-w-2xl relative z-10">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-800/80 border border-amber-600/40 text-amber-200 text-xs font-semibold">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span>યોગીજી મહારાજની બોધકથાઓ</span>
           </div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight font-['Noto_Sans_Gujarati'] leading-snug">
+            અમૃતવાણી બોધકથાઓનો દિવ્ય ખજાનો
+          </h1>
+          <p className="text-amber-200/90 text-xs sm:text-sm leading-relaxed">
+            જીવનમાં ભક્તિ, નમ્રતા, સત્સંગ અને સદાચારના સંસ્કારો સીંચતી પરમ પૂજ્ય યોગીજી મહારાજના મુખારવિંદેથી નીકળેલી ૪૬૯ પ્રાસાદિક વાર્તાઓ.
+          </p>
+        </div>
 
-          {/* Quick Continue Reading Button */}
-          <div className="shrink-0 bg-amber-950/50 backdrop-blur-sm p-3.5 sm:p-4 rounded-2xl border border-amber-500/30 flex flex-col sm:flex-row md:flex-col items-start sm:items-center md:items-start gap-3">
-            <div>
-              <div className="text-[11px] text-amber-300 font-semibold uppercase tracking-wider">છેલ્લે વાંચેલી વાર્તા</div>
-              <div className="font-bold text-xs sm:text-sm text-white truncate max-w-full sm:max-w-[200px] font-['Noto_Sans_Gujarati']">
-                {stories.find((s) => s.id === preferences.lastReadStoryId)?.title || stories[0]?.title}
-              </div>
+        {/* Quick Continue Reading Button */}
+        <div className="relative z-10 shrink-0 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 flex flex-col sm:flex-row md:flex-col items-start sm:items-center md:items-start gap-3">
+          <div>
+            <div className="text-[11px] text-amber-300 font-semibold uppercase tracking-wider">છેલ્લે વાંચેલી વાર્તા</div>
+            <div className="font-bold text-sm text-white truncate max-w-[220px] font-['Noto_Sans_Gujarati']">
+              {stories.find((s) => s.id === preferences.lastReadStoryId)?.title || stories[0]?.title}
             </div>
-            <button
-              id="resume-reading-btn"
-              onClick={() => onSelectStory(preferences.lastReadStoryId || 1)}
-              className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-xl text-xs font-bold shadow-sm transition-all active:scale-95 flex items-center gap-1.5"
-            >
-              <BookMarked className="w-4 h-4" />
-              <span>વાંચન ચાલુ રાખો</span>
-            </button>
           </div>
+          <button
+            id="resume-reading-btn"
+            onClick={() => onSelectStory(preferences.lastReadStoryId || 1)}
+            className="w-full sm:w-auto px-4 py-2 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-xl text-xs font-bold shadow-sm transition-all active:scale-95 flex items-center justify-center gap-1.5"
+          >
+            <BookMarked className="w-4 h-4" />
+            <span>વાંચન ચાલુ રાખો</span>
+          </button>
         </div>
       </div>
 
-      {/* Filter and Control Bar */}
-      <div className="space-y-3 sm:space-y-4">
-        {/* Status Filters & Jump to Story */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          {/* Status Tabs */}
+      {/* Clean Control & Filter Section */}
+      <div className="space-y-4 bg-white dark:bg-stone-900/90 p-4 sm:p-5 rounded-3xl border border-stone-200/80 dark:border-stone-800 shadow-xs">
+        {/* Row 1: Status Filters + Jump Input + View Switcher */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          {/* Status Filter Pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full no-scrollbar">
             <button
               id="filter-all-btn"
               onClick={() => setFilterReadStatus('all')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
                 filterReadStatus === 'all'
-                  ? 'bg-amber-700 text-white shadow-xs'
-                  : 'bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 hover:bg-stone-50'
+                  ? 'bg-amber-800 text-white shadow-xs'
+                  : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700'
               }`}
             >
               બધી ({stories.length})
@@ -237,10 +231,10 @@ export const StoryList: React.FC<StoryListProps> = ({
             <button
               id="filter-favorites-btn"
               onClick={() => setFilterReadStatus('favorites')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 flex items-center gap-1 ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 ${
                 filterReadStatus === 'favorites'
                   ? 'bg-amber-600 text-white shadow-xs'
-                  : 'bg-white dark:bg-stone-800 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-900/50 hover:bg-amber-50'
+                  : 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 hover:bg-amber-100'
               }`}
             >
               <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
@@ -250,22 +244,22 @@ export const StoryList: React.FC<StoryListProps> = ({
             <button
               id="filter-unread-btn"
               onClick={() => setFilterReadStatus('unread')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
                 filterReadStatus === 'unread'
-                  ? 'bg-amber-700 text-white shadow-xs'
-                  : 'bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 hover:bg-stone-50'
+                  ? 'bg-amber-800 text-white shadow-xs'
+                  : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200'
               }`}
             >
-              બાકી વાંચન ({stories.length - preferences.readStories.length})
+              બાકી ({stories.length - preferences.readStories.length})
             </button>
 
             <button
               id="filter-read-btn"
               onClick={() => setFilterReadStatus('read')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 flex items-center gap-1 ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 ${
                 filterReadStatus === 'read'
                   ? 'bg-emerald-700 text-white shadow-xs'
-                  : 'bg-white dark:bg-stone-800 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/50 hover:bg-emerald-50'
+                  : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100'
               }`}
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
@@ -273,9 +267,9 @@ export const StoryList: React.FC<StoryListProps> = ({
             </button>
           </div>
 
-          {/* Quick Jump & View Toggle */}
-          <div className="flex items-center justify-between sm:justify-start w-full sm:w-auto gap-2">
-            <form onSubmit={handleJumpToStory} className="flex items-center flex-1 sm:flex-initial">
+          {/* Jump to Story Number & Layout Toggle */}
+          <div className="flex items-center justify-between sm:justify-end gap-2 shrink-0">
+            <form onSubmit={handleJumpToStory} className="flex items-center">
               <input
                 id="jump-to-story-input"
                 type="number"
@@ -284,23 +278,23 @@ export const StoryList: React.FC<StoryListProps> = ({
                 value={jumpNumberInput}
                 onChange={(e) => setJumpNumberInput(e.target.value)}
                 placeholder="વાર્તા નં. (1-469)"
-                className="w-full sm:w-28 px-2.5 py-1.5 text-xs rounded-l-xl border border-r-0 border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                className="w-28 px-3 py-1.5 text-xs rounded-l-xl border border-r-0 border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
               />
               <button
                 type="submit"
-                className="px-3 py-1.5 bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold rounded-r-xl shrink-0"
+                className="px-3 py-1.5 bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold rounded-r-xl transition-all"
               >
                 જાઓ
               </button>
             </form>
 
-            <div className="flex items-center bg-stone-200/70 dark:bg-stone-800 p-1 rounded-xl shrink-0">
+            <div className="flex items-center bg-stone-100 dark:bg-stone-800 p-1 rounded-xl">
               <button
                 onClick={() => setViewLayout('grid')}
-                className={`p-1 rounded-lg transition-all ${
+                className={`p-1.5 rounded-lg transition-all ${
                   viewLayout === 'grid'
                     ? 'bg-white dark:bg-stone-700 text-amber-800 dark:text-amber-200 shadow-xs'
-                    : 'text-stone-500'
+                    : 'text-stone-500 hover:text-stone-800'
                 }`}
                 title="ગ્રીડ વ્યૂ"
               >
@@ -308,10 +302,10 @@ export const StoryList: React.FC<StoryListProps> = ({
               </button>
               <button
                 onClick={() => setViewLayout('list')}
-                className={`p-1 rounded-lg transition-all ${
+                className={`p-1.5 rounded-lg transition-all ${
                   viewLayout === 'list'
                     ? 'bg-white dark:bg-stone-700 text-amber-800 dark:text-amber-200 shadow-xs'
-                    : 'text-stone-500'
+                    : 'text-stone-500 hover:text-stone-800'
                 }`}
                 title="યાદી વ્યૂ"
               >
@@ -321,8 +315,8 @@ export const StoryList: React.FC<StoryListProps> = ({
           </div>
         </div>
 
-        {/* Category Filter Chips */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+        {/* Row 2: Category Filters */}
+        <div className="flex items-center gap-2 overflow-x-auto pt-2 border-t border-stone-100 dark:border-stone-800/80 no-scrollbar">
           {CATEGORIES.map((cat) => {
             const count = categoryCounts[cat.id] || 0;
             const isSelected = selectedCategory === cat.id;
@@ -330,20 +324,21 @@ export const StoryList: React.FC<StoryListProps> = ({
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all border ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all border ${
                   isSelected
-                    ? 'bg-amber-900 text-white border-amber-900 shadow-xs'
-                    : 'bg-white/80 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border-stone-200 dark:border-stone-700 hover:border-amber-400'
+                    ? 'bg-amber-900 text-white border-amber-900 shadow-xs font-bold'
+                    : 'bg-stone-50 dark:bg-stone-800/80 text-stone-600 dark:text-stone-300 border-stone-200 dark:border-stone-700 hover:border-amber-400'
                 }`}
               >
                 <span>{cat.name}</span>
-                <span className={`ml-1.5 px-1.5 py-0.2 rounded-full text-[10px] ${isSelected ? 'bg-amber-700 text-white' : 'bg-stone-100 dark:bg-stone-700 text-stone-500'}`}>
+                <span className={`ml-1.5 px-1.5 py-0.2 rounded-full text-[10px] ${isSelected ? 'bg-amber-700 text-white' : 'bg-stone-200 dark:bg-stone-700 text-stone-500'}`}>
                   {count}
                 </span>
               </button>
             );
           })}
         </div>
+      </div>
 
         {/* Quick Tag Filter Bar */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 text-xs no-scrollbar">
@@ -384,7 +379,6 @@ export const StoryList: React.FC<StoryListProps> = ({
             </button>
           )}
         </div>
-      </div>
 
       {/* Active Filter Indicators / Search Summary */}
       {(searchQuery || selectedCategory !== 'all' || selectedTagFilter || filterReadStatus !== 'all') && (
