@@ -137,47 +137,48 @@ export async function fetchAllStories(): Promise<Story[]> {
 }
 
 /**
- * Save / Merge user reading state to Supabase by user.id, email, or syncKey
+ * Save / Merge user reading state to Supabase by user_id
  */
 export async function syncPreferencesToSupabase(payload: SyncPayload, user?: AuthUser | null): Promise<{ success: boolean; error?: string }> {
   try {
     const client = getSupabaseClient();
     
-    // Collect all candidate keys to ensure user.id, email, and sync_key are all indexed in DB!
-    const keysToSync = new Set<string>();
-    if (user?.id) keysToSync.add(user.id);
-    if (user?.email) keysToSync.add(user.email.trim().toLowerCase());
-    if (payload.syncKey) keysToSync.add(payload.syncKey.trim());
-    if (keysToSync.size === 0) keysToSync.add('DEFAULT');
+    // Primary key in Supabase DB table is user_id
+    const userId = user?.id || (user?.email ? user.email.trim().toLowerCase() : payload.syncKey?.trim()) || 'GUEST';
+    const userName = user?.name || 'હરિભક્ત';
 
-    for (const key of keysToSync) {
-      const record = {
-        sync_key: key,
-        last_updated: payload.lastUpdated,
-        read_story_ids: payload.readStoryIds,
-        favorite_story_ids: payload.favoriteStoryIds,
-        bookmarks: payload.bookmarks,
-        notes: payload.notes,
-        custom_tags: payload.customTags || {},
-        last_read_story_id: payload.lastReadStoryId,
-        reading_streak: payload.readingStreak,
-        settings: payload.settings,
-        updated_at: new Date().toISOString(),
-      };
+    const record = {
+      user_id: userId,
+      user_name: userName,
+      read_story_ids: payload.readStoryIds || [],
+      favorite_story_ids: payload.favoriteStoryIds || [],
+      bookmarks: payload.bookmarks || [],
+      notes: payload.notes || {},
+      custom_tags: payload.customTags || {},
+      last_read_story_id: payload.lastReadStoryId || 1,
+      reading_streak: payload.readingStreak || { current: 1, best: 1, lastDate: '' },
+      settings: payload.settings || {},
+      last_synced_at: new Date().toISOString(),
+    };
 
-      await client
-        .from('bodhkathao_sync')
-        .upsert(record, { onConflict: 'sync_key' });
+    const { error } = await client
+      .from('bodhkathao_sync')
+      .upsert(record, { onConflict: 'user_id' });
+
+    if (error) {
+      console.error('Supabase DB upsert error:', error);
+      return { success: false, error: error.message };
     }
 
     return { success: true };
   } catch (err: any) {
+    console.error('Supabase DB sync exception:', err);
     return { success: false, error: err?.message || 'Supabase sync failed' };
   }
 }
 
 /**
- * Load preferences from Supabase by user ID, user email, or sync key
+ * Load preferences from Supabase by user_id or user email
  */
 export async function loadPreferencesFromSupabase(syncKeyOrUser: string | AuthUser | null): Promise<{ success: boolean; data?: SyncPayload; error?: string }> {
   if (!syncKeyOrUser) return { success: false, error: 'No user or key provided' };
@@ -189,6 +190,7 @@ export async function loadPreferencesFromSupabase(syncKeyOrUser: string | AuthUs
     if (typeof syncKeyOrUser === 'string') {
       const trimmed = syncKeyOrUser.trim();
       candidateKeys.push(trimmed);
+      candidateKeys.push(trimmed.toLowerCase());
       candidateKeys.push(trimmed.toUpperCase());
     } else if (typeof syncKeyOrUser === 'object') {
       if (syncKeyOrUser.id) candidateKeys.push(syncKeyOrUser.id);
@@ -199,13 +201,13 @@ export async function loadPreferencesFromSupabase(syncKeyOrUser: string | AuthUs
       const { data, error } = await client
         .from('bodhkathao_sync')
         .select('*')
-        .eq('sync_key', key)
+        .eq('user_id', key)
         .maybeSingle();
 
       if (!error && data) {
         const payload: SyncPayload = {
-          syncKey: data.sync_key,
-          lastUpdated: data.last_updated || Date.now(),
+          syncKey: data.user_id,
+          lastUpdated: data.last_synced_at ? new Date(data.last_synced_at).getTime() : Date.now(),
           readStoryIds: data.read_story_ids || [],
           favoriteStoryIds: data.favorite_story_ids || [],
           bookmarks: data.bookmarks || [],
