@@ -161,7 +161,13 @@ export function App() {
 
   const handleOpenTagInExplorer = (tag: string) => {
     setSelectedTagForExplorer(tag);
-    setActiveView('tags');
+    if (tag && tag.trim()) {
+      setSearchQuery(tag.trim());
+      setActiveView('list');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      setActiveView('tags');
+    }
   };
 
   // Current active story
