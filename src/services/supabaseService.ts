@@ -399,7 +399,7 @@ CREATE POLICY "Public sync access" ON public.bodhkathao_sync
 const LOCAL_ACCOUNTS_KEY = 'bodhkathao_user_accounts';
 const ACTIVE_USER_KEY = 'bodhkathao_active_user';
 
-function getLocalAccounts(): Record<string, { id: string; email: string; name: string; passwordHash: string; createdAt: string }> {
+function getLocalAccounts(): Record<string, { id: string; email: string; name?: string; passwordHash: string; createdAt?: string }> {
   try {
     const raw = localStorage.getItem(LOCAL_ACCOUNTS_KEY);
     return raw ? JSON.parse(raw) : {};
@@ -419,7 +419,10 @@ function saveLocalAccount(email: string, name: string, password: string): AuthUs
   };
 
   accounts[cleanEmail] = {
-    ...newUser,
+    id: newUser.id,
+    email: newUser.email,
+    name: newUser.name || 'હરિભક્ત',
+    createdAt: newUser.createdAt || new Date().toISOString(),
     passwordHash: btoa(password),
   };
 
