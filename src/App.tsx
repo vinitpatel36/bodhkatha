@@ -18,7 +18,8 @@ import {
 } from './services/storageService';
 import { 
   getCurrentAuthUser, 
-  onAuthSessionChange 
+  onAuthSessionChange,
+  loadPreferencesFromSupabase 
 } from './services/supabaseService';
 import { UserPreferences, Story, AuthUser } from './types';
 import { BookOpen, BookMarked, BarChart3, Cloud, Star, User as UserIcon, Tag as TagIcon } from 'lucide-react';
