@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient, User as SupabaseAuthUser } from '@supabase/supabase-js';
-import { Story, UserPreferences, SyncPayload, AuthUser } from '../types';
+import { Story, UserPreferences, SyncPayload, AuthUser, ReadingSettings } from '../types';
 import { ALL_469_BODHKATHAO_STORIES } from '../data/allStoriesData';
 
 // Provided Supabase configuration with environment variable support
@@ -560,7 +560,14 @@ export async function signUpUser(
         customTags: {},
         lastReadStoryId: 1,
         readingStreak: { current: 1, best: 1, lastDate: new Date().toISOString().split('T')[0] },
-        settings: {},
+        settings: {
+          theme: 'sepia',
+          fontSize: 'lg',
+          fontFamily: 'noto-sans',
+          lineSpacing: 'relaxed',
+          autoMarkRead: true,
+          speechRate: 0.9,
+        },
       }).catch(() => {});
     } catch (e) {}
 
