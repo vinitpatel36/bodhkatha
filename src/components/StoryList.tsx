@@ -315,29 +315,7 @@ export const StoryList: React.FC<StoryListProps> = ({
           </div>
         </div>
 
-        {/* Row 2: Category Filters */}
-        <div className="flex items-center gap-2 overflow-x-auto pt-2 border-t border-stone-100 dark:border-stone-800/80 no-scrollbar">
-          {CATEGORIES.map((cat) => {
-            const count = categoryCounts[cat.id] || 0;
-            const isSelected = selectedCategory === cat.id;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all border ${
-                  isSelected
-                    ? 'bg-amber-900 text-white border-amber-900 shadow-xs font-bold'
-                    : 'bg-stone-50 dark:bg-stone-800/80 text-stone-600 dark:text-stone-300 border-stone-200 dark:border-stone-700 hover:border-amber-400'
-                }`}
-              >
-                <span>{cat.name}</span>
-                <span className={`ml-1.5 px-1.5 py-0.2 rounded-full text-[10px] ${isSelected ? 'bg-amber-700 text-white' : 'bg-stone-200 dark:bg-stone-700 text-stone-500'}`}>
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+
       </div>
 
 
